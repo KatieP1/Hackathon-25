@@ -69,7 +69,7 @@ CREATE TABLE purchase_line(
     cost_per_ct NUMERIC     NOT NULL,
     PRIMARY KEY (pl_id, p_id),
     FOREIGN KEY (p_id) REFERENCES purchase(p_id),
-    FOREIGN KEY (item_id) REFERENCES item(id)
+    FOREIGN KEY (item_id) REFERENCES item(item_id)
 );
 
 INSERT INTO purchase_line
@@ -108,7 +108,7 @@ CREATE TABLE meal_ingredient(
     item_id     INT         NOT NULL,
     quant_used  INT         NOT NULL,
     cost_per_ct NUMERIC     NOT NULL,
-    PRIMARY KEY (meal id),
+    PRIMARY KEY (meal_id),
     FOREIGN KEY (meal_id) REFERENCES meal(meal_id),
     FOREIGN KEY (item_id, cost_per_ct) REFERENCES item(item_id, cost_per_ct)
 );
