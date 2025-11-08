@@ -22,7 +22,7 @@ CREATE TABLE people (
     name        VARCHAR(30) NOT NULL,
     email       VARCHAR     UNIQUE,
     house_id    INT         NOT NULL,
-    PRIMARY KEY (id),
+    PRIMARY KEY (id, house_id),
     FOREIGN KEY (house_id) REFERENCES house(id)
 );
 
@@ -57,7 +57,7 @@ CREATE TABLE purchase(
 
 INSERT INTO purchase
 VALUES  (1, 1, 1, '2025-11-08'),
-        (2, 1, 2, '2025-09-20'),
+        (2, 1, 1, '2025-09-20'),
         (3, 1, 2, '2025-09-20');
 
 CREATE TABLE purchase_line(
@@ -73,8 +73,8 @@ CREATE TABLE purchase_line(
 );
 
 INSERT INTO purchase_line
-VALUES  (1, 1, 2, 1, 3, 2),
-        (2, 2, 1, 3, 1, 4);
+VALUES  (1, 1, 1, 1, 2, 12.50),
+        (2, 1, 3, 1, 3, 40);
 
 CREATE TABLE meal   (
     meal_id     INT         NOT NULL, 
@@ -96,13 +96,13 @@ CREATE TABLE meal_attend(
     user_id     INT         NOT NULL,
     PRIMARY KEY (meal_id, user_id),
     FOREIGN KEY (meal_id, house_id) REFERENCES meal(meal_id, house_id),
-    FOREIGN KEY (user_id) REFERENCES people(id)
+    FOREIGN KEY (user_id, house_id) REFERENCES people(id, house_id)
 );
 
 INSERT INTO meal_attend
 VALUES  (1, 1, 1),
         (1, 1, 2),
-        (3, 2, 1);
+        (3, 2, 3);
 
 CREATE TABLE meal_ingredient(
     meal_id     INT         NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE meal_ingredient(
     item_id     INT         NOT NULL,
     quant_used  INT         NOT NULL,
     cost_per_ct NUMERIC     NOT NULL,
-    PRIMARY KEY (meal_id),
+    PRIMARY KEY (meal_id, house_id, item_id),
     FOREIGN KEY (meal_id, house_id) REFERENCES meal(meal_id, house_id),
     FOREIGN KEY (item_id, house_id) REFERENCES item(item_id, house_id)
 );
