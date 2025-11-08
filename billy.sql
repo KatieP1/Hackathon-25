@@ -118,4 +118,3 @@ CREATE TABLE meal_ingredient(
 INSERT INTO meal_ingredient
 VALUES  (1, 1, 1, 1, 2),
         (2, 1, 1, 3, 5);
-    
