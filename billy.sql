@@ -63,12 +63,13 @@ VALUES  (1, 2, 1, '2025-11-08'),
 
 CREATE TABLE purchase_line(
     pl_id       INT         NOT NULL,
+    house_id    INT         NOT NULL
     p_id        INT         NOT NULL,
     item_id     INT         NOT NULL, 
     quantity    INT         NOT NULL, 
     cost_per_ct NUMERIC     NOT NULL,
     PRIMARY KEY (pl_id, p_id),
-    FOREIGN KEY (p_id) REFERENCES purchase(p_id),
+    FOREIGN KEY (p_id, house_id) REFERENCES purchase(p_id, house_id),
     FOREIGN KEY (item_id) REFERENCES item(id)
 );
 
