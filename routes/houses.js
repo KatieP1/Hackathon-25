@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const { query, queryOne, run } = require('../config/database')
 
-const { query } = require('../config/database')
 // GET all house
 router.get("/", async (req, res) => {
     try {
@@ -92,9 +92,76 @@ router.get("/:id/meals", async (req, res) => {
     }
 });
 
-// Add a new house
-// router.post("/", async (req, res) => {
-
-// });
+// POST create new house
+router.post('/', async (req, res) => {
+    try {
+      const { name } = req.body;
+      
+      if (!name) {
+        return res.status(400).json({ error: 'Name is required' });
+      }
+      
+      const result = await run(
+        'INSERT INTO house (name) VALUES (?)',
+        [name]
+      );
+      
+      const newHouse = await queryOne(
+        'SELECT * FROM house WHERE id = ?',
+        [result.lastID]
+      );
+      
+      res.status(201).json(newHouse);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+});
+  
+// PUT update house
+router.put('/:id', async (req, res) => {
+    try {
+      const { name } = req.body;
+      
+      if (!name) {
+        return res.status(400).json({ error: 'Name is required' });
+      }
+      
+      const result = await run(
+        'UPDATE house SET name = ? WHERE id = ?',
+        [name, req.params.id]
+      );
+      
+      if (result.changes === 0) {
+        return res.status(404).json({ error: 'House not found' });
+      }
+      
+      const updatedHouse = await queryOne(
+        'SELECT * FROM house WHERE id = ?',
+        [req.params.id]
+      );
+      
+      res.json(updatedHouse);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+});
+  
+// DELETE house
+router.delete('/:id', async (req, res) => {
+    try {
+      const result = await run(
+        'DELETE FROM house WHERE id = ?',
+        [req.params.id]
+      );
+      
+      if (result.changes === 0) {
+        return res.status(404).json({ error: 'House not found' });
+      }
+      
+      res.json({ message: 'House deleted successfully' });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+});
 
 module.exports = router; 

@@ -2,13 +2,14 @@
 const express = require("express"); //Framework to build web applications
 const cors = require("cors"); // Library that controls Cross-Origin Resource Sharing
 const bodyParser = require("body-parser"); // parses the body of incoming HTTP requests
-
+const path = require('path');
+const sqlite3 = require('sqlite3').verbose();
 // Import routes
 const housesRouter = require('./routes/houses.js');
-// const peopleRouter = require('./routes/people');
-// const purchasesRouter = require('./routes/purchases');
-// const mealsRouter = require('./routes/meals');
-// const itemsRouter = require('./routes/items');
+const peopleRouter = require('./routes/people');
+const purchasesRouter = require('./routes/purchases');
+const mealsRouter = require('./routes/meals');
+const itemsRouter = require('./routes/items');
 
 // Create an Express application
 // This is the main application object for handling HTTP requests and responses.
@@ -30,6 +31,14 @@ const logRequest = function(req, res, next) {
 
 app.use(logRequest);
 
+// Serve static frontend files
+app.use(express.static(path.join(__dirname, 'frontend')));
+
+// If needed, make '/' load index.html explicitly:
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+});
+
 // Root route
 app.get("/", (req, res) => {
     res.json({
@@ -37,20 +46,20 @@ app.get("/", (req, res) => {
       version: "1.0.0",
       endpoints: {
         houses: "/api/houses",
-        // people: '/api/people',
-        // purchases: '/api/purchases',
-        // meals: '/api/meals',
-        // items: '/api/items'
+        people: '/api/people',
+        purchases: '/api/purchases',
+        meals: '/api/meals',
+        items: '/api/items'
       },
     });
 });
 
 //API routes
 app.use('/api/houses', housesRouter);
-// app.use('/api/people', peopleRouter);
-// app.use('/api/purchases', purchasesRouter);
-// app.use('/api/meals', mealsRouter);
-// app.use('/api/items', itemsRouter);
+app.use('/api/people', peopleRouter);
+app.use('/api/purchases', purchasesRouter);
+app.use('/api/meals', mealsRouter);
+app.use('/api/items', itemsRouter);
 
 // 404 handler
 app.use((req, res) => {

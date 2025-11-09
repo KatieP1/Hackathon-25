@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billy – Household Expense Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Billy</h1>
+      <div class="house-selector">
+        <label for="houseSelect">Select House:</label>
+        <select id="houseSelect" aria-label="Select House">
+          <option value="">Loading...</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- Tabs: start with "add stuff" tabs first, dashboard last -->
+    <nav class="tabs">
+      <button type="button" class="tab-btn active" data-tab="purchases">Purchases</button>
+      <button type="button" class="tab-btn" data-tab="meals">Meals</button>
+      <button type="button" class="tab-btn" data-tab="inventory">Inventory</button>
+      <button type="button" class="tab-btn" data-tab="people">People</button>
+      <button type="button" class="tab-btn" data-tab="dashboard">Overview</button>
+    </nav>
+
+    <!-- Purchases Tab (DEFAULT VIEW) -->
+    <div id="purchases" class="tab-content active">
+      <div class="section-header">
+        <h2>Purchases</h2>
+        <button type="button" class="btn btn-primary" onclick="showAddPurchaseModal()">+ Add Purchase</button>
+      </div>
+      <div id="purchasesList" class="list-container">
+        <p>Loading purchases...</p>
+      </div>
+    </div>
+
+    <!-- Meals Tab -->
+    <div id="meals" class="tab-content">
+      <div class="section-header">
+        <h2>Meals</h2>
+        <button type="button" class="btn btn-primary" onclick="showAddMealModal()">+ Add Meal</button>
+      </div>
+      <div id="mealsList" class="list-container">
+        <p>Loading meals...</p>
+      </div>
+    </div>
+
+    <!-- Inventory Tab -->
+    <div id="inventory" class="tab-content">
+      <div class="section-header">
+        <h2>Inventory</h2>
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick="showAddItemModal()"
+        >
+          + Add Item
+        </button>
+      </div>
+      <div id="inventoryList" class="list-container">
+        <p>Loading inventory...</p>
+      </div>
+    </div>
+
+    <!-- People Tab -->
+    <div id="people" class="tab-content">
+      <div class="section-header">
+        <h2>House Members</h2>
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick="showAddPersonModal()"
+        >
+          + Add Person
+        </button>
+      </div>
+      <div id="peopleList" class="list-container">
+        <p>Loading people...</p>
+      </div>
+    </div>
+
+    <!-- Dashboard / Overview Tab (moved to last, no longer default) -->
+    <div id="dashboard" class="tab-content">
+      <div class="dashboard-grid">
+        <div class="card">
+          <h3>House Summary</h3>
+          <div id="houseSummary">
+            <p>Select a house to view summary</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Recent Purchases</h3>
+          <div id="recentPurchases">
+            <p>No recent purchases</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Recent Meals</h3>
+          <div id="recentMeals">
+            <p>No recent meals</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Low Stock Items</h3>
+          <div id="lowStockItems">
+            <p>All items in stock</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Purchase Modal -->
+    <div id="addPurchaseModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('addPurchaseModal')">&times;</span>
+        <h2>Add Purchase</h2>
+        <form id="addPurchaseForm">
+          <label for="purchaseBuyer">Buyer:</label>
+          <select id="purchaseBuyer" name="purchaseBuyer" required>
+            <option value="">Select buyer...</option>
+          </select>
+
+          <label for="purchaseDate">Date:</label>
+          <input type="date" id="purchaseDate" name="purchaseDate" required>
+
+          <div id="purchaseLines">
+            <h3>Items</h3>
+            <div class="purchase-line">
+              <label>
+                Item:
+                <select class="item-select" name="item[]" required>
+                  <option value="">Select item...</option>
+                </select>
+              </label>
+
+              <label>
+                Quantity:
+                <input
+                  type="number"
+                  class="quantity-input"
+                  name="quantity[]"
+                  placeholder="Qty"
+                  min="1"
+                  required
+                >
+              </label>
+
+              <label>
+                Cost per Unit:
+                <input
+                  type="number"
+                  class="cost-input"
+                  name="cost[]"
+                  placeholder="Cost per unit"
+                  step="0.01"
+                  min="0"
+                  required
+                >
+              </label>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-secondary" onclick="addPurchaseLine()">+ Add Item</button>
+          <button type="submit" class="btn btn-primary">Save Purchase</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add Meal Modal -->
+    <div id="addMealModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('addMealModal')">&times;</span>
+        <h2>Add Meal</h2>
+        <form id="addMealForm">
+          <label for="mealName">Meal Name:</label>
+          <input type="text" id="mealName" name="mealName" required>
+
+          <label for="mealDate">Date:</label>
+          <input type="date" id="mealDate" name="mealDate" required>
+
+          <fieldset>
+            <legend>Attendees</legend>
+            <div id="mealAttendees">
+              <!-- populated by JS -->
+            </div>
+          </fieldset>
+
+          <button type="submit" class="btn btn-primary">Save Meal</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div id="addItemModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('addItemModal')">&times;</span>
+        <h2>Add Item</h2>
+        <form id="addItemForm">
+          <label for="itemName">Item Name:</label>
+          <input type="text" id="itemName" name="itemName" required>
+
+          <label for="itemCount">Quantity:</label>
+          <input type="number" id="itemCount" name="itemCount" min="0" required>
+
+          <label for="itemCost">Cost per Unit:</label>
+          <input type="number" id="itemCost" name="itemCost" step="0.01" min="0" required>
+
+          <button type="submit" class="btn btn-primary">Add Item</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add Person Modal -->
+    <div id="addPersonModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('addPersonModal')">&times;</span>
+        <h2>Add Person</h2>
+        <form id="addPersonForm">
+          <label for="personName">Name:</label>
+          <input type="text" id="personName" name="personName" required>
+
+          <label for="personEmail">Email:</label>
+          <input type="email" id="personEmail" name="personEmail" required>
+
+          <button type="submit" class="btn btn-primary">Add Person</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
